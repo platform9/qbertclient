@@ -84,13 +84,13 @@ class Keystone():
         if totp_body:
             body['auth']['identity']['totp'] = totp_body
 
-        LOG.info("Printing login body: {}".format(body))
+        LOG.debug("Printing login body: {}".format(body))
         resp = requests.post(url,
                              data=json.dumps(body),
                              headers={'content-type': 'application/json'},
                              verify=self.verify)
         resp.raise_for_status()
-        LOG.info("Printing login response: {}".format(resp.json()))
+        LOG.debug("Printing login response: {}".format(resp.json()))
         self.token = resp.headers['X-Subject-Token']
         return self.token
 
