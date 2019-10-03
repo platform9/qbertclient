@@ -50,7 +50,7 @@ class Qbert():
         :param uuid: UUID of the cloud provider
         :return: json object
         """
-        LOG.info('Getting cloud provider region info for: %s', uuid)
+        LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}'.format(uuid)
         resp = self._make_req(endpoint)
         return resp.json()
@@ -62,7 +62,7 @@ class Qbert():
         :param region: Name of the region
         :return:
         """
-        LOG.info('Getting cloud provider region info for: %s', uuid)
+        LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}/region/{1}'.format(uuid, region)
         resp = self._make_req(endpoint)
         return resp.json()
@@ -106,7 +106,7 @@ class Qbert():
         List cloud providers
         :return:
         """
-        LOG.info('Listing Cloud Providers')
+        LOG.debug('Listing Cloud Providers')
         endpoint = '/cloudProviders'
         resp = self._make_req(endpoint)
         return resp.json()
@@ -116,7 +116,7 @@ class Qbert():
         List cloud provider types
         :return:
         """
-        LOG.info('Listing Cloud Provider Types')
+        LOG.debug('Listing Cloud Provider Types')
         endpoint = '/cloudProvider/types'
         resp = self._make_req(endpoint)
         return resp.json()
@@ -126,7 +126,7 @@ class Qbert():
         List nodepools
         :return:
         """
-        LOG.info('Listing node pools')
+        LOG.debug('Listing node pools')
         endpoint = '/nodePools'
         resp = self._make_req(endpoint)
         return dict_utils.keyed_list_to_dict(resp.json(), 'name')
@@ -136,7 +136,7 @@ class Qbert():
         List nodes
         :return:
         """
-        LOG.info('Listing nodes')
+        LOG.debug('Listing nodes')
         endpoint = '/nodes'
         resp = self._make_req(endpoint)
         return dict_utils.keyed_list_to_dict(resp.json(), 'name')
@@ -146,7 +146,7 @@ class Qbert():
         List nodes by uuid
         :return:
         """
-        LOG.info('Listing nodes')
+        LOG.debug('Listing nodes')
         endpoint = '/nodes'
         resp = self._make_req(endpoint)
         return dict_utils.keyed_list_to_dict(resp.json(), 'uuid')
@@ -156,7 +156,7 @@ class Qbert():
         List clusters
         :return:
         """
-        LOG.info('Listing clusters')
+        LOG.debug('Listing clusters')
         endpoint = '/clusters'
         resp = self._make_req(endpoint)
         return dict_utils.keyed_list_to_dict(resp.json(), 'name')
@@ -166,7 +166,7 @@ class Qbert():
         List clusters by uuid
         :return:
         """
-        LOG.info('Listing clusters')
+        LOG.debug('Listing clusters')
         endpoint = '/clusters'
         resp = self._make_req(endpoint)
         return dict_utils.keyed_list_to_dict(resp.json(), 'uuid')
@@ -178,7 +178,7 @@ class Qbert():
         :param body:
         :return:
         """
-        LOG.info('Updating cluster: %s', uuid)
+        LOG.debug('Updating cluster: %s', uuid)
         endpoint = '/clusters/' + uuid
         method = 'PUT'
         self._make_req(endpoint, method, body)
@@ -189,7 +189,7 @@ class Qbert():
         :param body:
         :return:
         """
-        LOG.info('Creating cluster %s', body['name'])
+        LOG.debug('Creating cluster %s', body['name'])
         endpoint = '/clusters'
         method = 'POST'
         resp = self._make_req(endpoint, method, body)
@@ -202,7 +202,7 @@ class Qbert():
         :param uuid:
         :return:
         """
-        LOG.info('Get cluster')
+        LOG.debug('Get cluster')
         endpoint = '/clusters/%s' % uuid
         resp = self._make_req(endpoint)
         return resp.json()
@@ -213,7 +213,7 @@ class Qbert():
         :param uuid:
         :return:
         """
-        LOG.info('Deleting cluster %s', uuid)
+        LOG.debug('Deleting cluster %s', uuid)
         endpoint = '/clusters/{0}'.format(uuid)
         method = 'DELETE'
         self._make_req(endpoint, method)
@@ -224,7 +224,7 @@ class Qbert():
         :param name:
         :return:
         """
-        LOG.info('Deleting cluster %s', name)
+        LOG.debug('Deleting cluster %s', name)
         cluster_uuid = self.list_clusters()[name]['uuid']
         endpoint = '/clusters/{0}'.format(cluster_uuid)
         method = 'DELETE'
@@ -237,7 +237,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Attaching nodes %s to cluster %s', nodes_list, cluster_name)
+        LOG.debug('Attaching nodes %s to cluster %s', nodes_list, cluster_name)
         nodes = self.list_nodes()
         node_uuids = [{'uuid': nodes[node_item['node_name']]['uuid'], 'isMaster': node_item['isMaster']} for node_item
                       in
@@ -255,7 +255,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Detaching node %s from cluster %s', node_name, cluster_name)
+        LOG.debug('Detaching node %s from cluster %s', node_name, cluster_name)
         node_uuid = [{'uuid': self.list_nodes()[node_name]['uuid']}]
         cluster_uuid = self.list_clusters()[cluster_name]['uuid']
         endpoint = '/clusters/{0}/detach'.format(cluster_uuid)
@@ -270,7 +270,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Attaching nodes %s to cluster %s', node_names, cluster_name)
+        LOG.debug('Attaching nodes %s to cluster %s', node_names, cluster_name)
         nodes = self.list_nodes()
         node_uuids = [nodes[node_name]['uuid'] for node_name in node_names]
         cluster_uuid = self.list_clusters()[cluster_name]['uuid']
@@ -286,7 +286,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Detaching node %s from cluster %s', node_name, cluster_name)
+        LOG.debug('Detaching node %s from cluster %s', node_name, cluster_name)
         node_uuid = self.list_nodes()[node_name]['uuid']
         endpoint = '/nodes/{0}'.format(node_uuid)
         method = 'PUT'
@@ -299,9 +299,9 @@ class Qbert():
         :param name:
         :return:
         """
-        LOG.info('Getting cluster %s', name)
+        LOG.debug('Getting cluster %s', name)
         clusters = self.list_clusters()
-        LOG.info('list_clusters output: %s', clusters)
+        LOG.debug('list_clusters output: %s', clusters)
         cluster_uuid = clusters[name]['uuid']
         endpoint = '/clusters/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint)
@@ -313,7 +313,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Getting masterIp for cluster %s', cluster_name)
+        LOG.debug('Getting masterIp for cluster %s', cluster_name)
         return self.get_cluster(cluster_name)['masterIp']
 
     def get_kubeconfig(self, cluster_name):
@@ -322,7 +322,7 @@ class Qbert():
         :param cluster_name:
         :return:
         """
-        LOG.info('Getting kubeconfig for cluster %s', cluster_name)
+        LOG.debug('Getting kubeconfig for cluster %s', cluster_name)
         cluster_uuid = self.list_clusters()[cluster_name]['uuid']
         return self.get_kubeconfig_by_uuid(cluster_uuid)
 
@@ -342,7 +342,7 @@ class Qbert():
         :param node_name:
         :return:
         """
-        LOG.info('Requesting kube.LOG from node %s', node_name)
+        LOG.debug('Requesting kube.LOG from node %s', node_name)
         node_uuid = self.list_nodes()[node_name]['uuid']
         endpoint = '/LOGs/{0}'.format(node_uuid)
         resp = self._make_req(endpoint)
@@ -354,7 +354,7 @@ class Qbert():
         :param cluster_uuid:
         :return:
         """
-        LOG.info('Getting cli token for cluster %s', cluster_uuid)
+        LOG.debug('Getting cli token for cluster %s', cluster_uuid)
         endpoint = '/webcli/{0}'.format(cluster_uuid)
         method = 'POST'
         resp = self._make_req(endpoint, method)
@@ -365,7 +365,7 @@ class Qbert():
         Trigger an omniupgrade
         :return:
         """
-        LOG.info('Triggering omniupgrade')
+        LOG.debug('Triggering omniupgrade')
         endpoint = '/omniupgrade'
         method = 'POST'
         return self._make_req(endpoint, method)
@@ -376,7 +376,7 @@ class Qbert():
         :param uuid:
         :return:
         """
-        LOG.info('Upgrading cluster %s', uuid)
+        LOG.debug('Upgrading cluster %s', uuid)
         endpoint = '/clusters/{0}/upgrade'.format(uuid)
         method = 'POST'
         body = {'batchUpgradePercent': 100}
