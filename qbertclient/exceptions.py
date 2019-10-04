@@ -12,5 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""
+Exception module for Qbert errors.
+"""
+
+
 class QbertError(Exception):
-    pass
+    """
+    Main exception class for Qbert errors.
+    """

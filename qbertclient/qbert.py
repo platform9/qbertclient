@@ -19,7 +19,6 @@ This module contains the Qbert class
 import logging
 
 from qbertclient import dict_utils, request_utils
-from qbertclient import exceptions
 
 LOG = logging.getLogger(__name__)
 
@@ -209,7 +208,7 @@ class Qbert():
         resp = self._make_req(endpoint)
         return resp
 
-    def delete_cluster_by_uuid(self, uuid):
+    def delete_cluster(self, uuid):
         """
         Delete cluster by uuid
         :param uuid:
@@ -217,19 +216,6 @@ class Qbert():
         """
         LOG.debug('Deleting cluster %s', uuid)
         endpoint = '/clusters/{0}'.format(uuid)
-        method = 'DELETE'
-        resp = self._make_req(endpoint, method)
-        return resp
-
-    def delete_cluster(self, name):
-        """
-        Delete cluster by name
-        :param name:
-        :return:
-        """
-        LOG.debug('Deleting cluster %s', name)
-        cluster_uuid = self.list_clusters()[name]['uuid']
-        endpoint = '/clusters/{0}'.format(cluster_uuid)
         method = 'DELETE'
         resp = self._make_req(endpoint, method)
         return resp
@@ -301,7 +287,6 @@ class Qbert():
         resp = self._make_req(endpoint, method, body)
         return resp
 
-
     def get_master_ip(self, cluster_uuid):
         """
         Get masterIP of a cluster with uuid cluster_uuid
@@ -310,16 +295,6 @@ class Qbert():
         """
         LOG.debug('Getting masterIp for cluster %s', cluster_uuid)
         return self.get_cluster(cluster_uuid)['masterIp']
-
-    def get_kubeconfig(self, cluster_name):
-        """
-        Get kubeconfig of a cluster by name
-        :param cluster_name:
-        :return:
-        """
-        LOG.debug('Getting kubeconfig for cluster %s', cluster_name)
-        cluster_uuid = self.list_clusters()[cluster_name]['uuid']
-        return self.get_kubeconfig_by_uuid(cluster_uuid)
 
     def get_kubeconfig_by_uuid(self, cluster_uuid):
         """
