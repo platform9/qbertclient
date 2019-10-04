@@ -296,7 +296,7 @@ class Qbert():
         LOG.debug('Getting masterIp for cluster %s', cluster_uuid)
         return self.get_cluster(cluster_uuid)['masterIp']
 
-    def get_kubeconfig_by_uuid(self, cluster_uuid):
+    def get_kubeconfig(self, cluster_uuid):
         """
         Get kubeconfig of a cluster by uuid
         :param cluster_uuid:
