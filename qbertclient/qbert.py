@@ -198,7 +198,7 @@ class Qbert():
         resp = self._make_req(endpoint, method, body)
         return resp
 
-    def get_cluster_by_uuid(self, uuid):
+    def get_cluster(self, uuid):
         """
         Get cluster by uuid
         :param uuid:
@@ -301,28 +301,15 @@ class Qbert():
         resp = self._make_req(endpoint, method, body)
         return resp
 
-    def get_cluster(self, name):
-        """
-        Get cluster info
-        :param name:
-        :return:
-        """
-        LOG.debug('Getting cluster %s', name)
-        clusters = self.list_clusters()
-        LOG.debug('list_clusters output: %s', clusters)
-        cluster_uuid = clusters[name]['uuid']
-        endpoint = '/clusters/{0}'.format(cluster_uuid)
-        resp = self._make_req(endpoint)
-        return resp
 
-    def get_master_ip(self, cluster_name):
+    def get_master_ip(self, cluster_uuid):
         """
-        Get masterIP of a cluster
-        :param cluster_name:
+        Get masterIP of a cluster with uuid cluster_uuid
+        :param cluster_uuid:
         :return:
         """
-        LOG.debug('Getting masterIp for cluster %s', cluster_name)
-        return self.get_cluster(cluster_name)['masterIp']
+        LOG.debug('Getting masterIp for cluster %s', cluster_uuid)
+        return self.get_cluster(cluster_uuid)['masterIp']
 
     def get_kubeconfig(self, cluster_name):
         """
