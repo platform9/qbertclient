@@ -22,6 +22,7 @@ import os
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from qbertclient import exceptions as QbertExceptions
 
 LOG = logging.getLogger(__name__)
 REQUEST_TIMEOUT = int(os.getenv('HTTP_REQUEST_TIMEOUT_IN_SECS', '180'))
@@ -60,4 +61,7 @@ def make_req(session, endpoint, method, body, verify=True):
     resp = session.request(method, endpoint, json=body, verify=verify,
                            timeout=REQUEST_TIMEOUT)
     LOG.debug('%s %s - %s', method, endpoint, resp.status_code)
-    return resp
+    obj = resp.json()
+    if 'error' in obj:
+        raise QbertExceptions.QbertError(obj['error']['message'])
+    return obj

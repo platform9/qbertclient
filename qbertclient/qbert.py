@@ -19,6 +19,7 @@ This module contains the Qbert class
 import logging
 
 from qbertclient import dict_utils, request_utils
+from qbertclient import exceptions
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class Qbert():
         LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}'.format(uuid)
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def get_cloud_provider_region_info(self, uuid, region):
         """
@@ -65,7 +66,7 @@ class Qbert():
         LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}/region/{1}'.format(uuid, region)
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def delete_cloud_provider(self, uuid):
         """
@@ -76,7 +77,7 @@ class Qbert():
         endpoint = '/cloudProviders/{0}'.format(uuid)
         method = 'DELETE'
         resp = self._make_req(endpoint, method)
-        return resp.json()
+        return resp
 
     def create_cloud_provider(self, request_body):
         """
@@ -87,7 +88,7 @@ class Qbert():
         endpoint = '/cloudProviders'
         method = 'POST'
         resp = self._make_req(endpoint, method, request_body)
-        return resp.json()
+        return resp
 
     def update_cloud_provider(self, uuid, request_body):
         """
@@ -100,7 +101,7 @@ class Qbert():
         endpoint = '/cloudProviders/' + uuid
         method = 'PUT'
         resp = self._make_req(endpoint, method, request_body)
-        return resp.json()
+        return resp
 
     def list_cloud_providers(self):
         """
@@ -110,7 +111,7 @@ class Qbert():
         LOG.debug('Listing Cloud Providers')
         endpoint = '/cloudProviders'
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def list_cloud_provider_types(self):
         """
@@ -120,7 +121,7 @@ class Qbert():
         LOG.debug('Listing Cloud Provider Types')
         endpoint = '/cloudProvider/types'
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def list_nodepools(self):
         """
@@ -130,7 +131,7 @@ class Qbert():
         LOG.debug('Listing node pools')
         endpoint = '/nodePools'
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def list_nodes(self):
         """
@@ -140,7 +141,7 @@ class Qbert():
         LOG.debug('Listing nodes')
         endpoint = '/nodes'
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def list_nodes_by_uuid(self):
         """
@@ -150,7 +151,7 @@ class Qbert():
         LOG.debug('Listing nodes')
         endpoint = '/nodes'
         resp = self._make_req(endpoint)
-        return dict_utils.keyed_list_to_dict(resp.json(), 'uuid')
+        return dict_utils.keyed_list_to_dict(resp, 'uuid')
 
     def list_clusters(self):
         """
@@ -160,7 +161,7 @@ class Qbert():
         LOG.debug('Listing clusters')
         endpoint = '/clusters'
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def list_clusters_by_uuid(self):
         """
@@ -170,7 +171,7 @@ class Qbert():
         LOG.debug('Listing clusters')
         endpoint = '/clusters'
         resp = self._make_req(endpoint)
-        return dict_utils.keyed_list_to_dict(resp.json(), 'uuid')
+        return dict_utils.keyed_list_to_dict(resp, 'uuid')
 
     def update_cluster(self, uuid, body):
         """
@@ -183,7 +184,7 @@ class Qbert():
         endpoint = '/clusters/' + uuid
         method = 'PUT'
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def create_cluster(self, body):
         """
@@ -195,7 +196,7 @@ class Qbert():
         endpoint = '/clusters'
         method = 'POST'
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def get_cluster_by_uuid(self, uuid):
         """
@@ -206,7 +207,7 @@ class Qbert():
         LOG.debug('Get cluster')
         endpoint = '/clusters/%s' % uuid
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def delete_cluster_by_uuid(self, uuid):
         """
@@ -218,7 +219,7 @@ class Qbert():
         endpoint = '/clusters/{0}'.format(uuid)
         method = 'DELETE'
         resp = self._make_req(endpoint, method)
-        return resp.json()
+        return resp
 
     def delete_cluster(self, name):
         """
@@ -231,7 +232,7 @@ class Qbert():
         endpoint = '/clusters/{0}'.format(cluster_uuid)
         method = 'DELETE'
         resp = self._make_req(endpoint, method)
-        return resp.json()
+        return resp
 
     def attach_nodes(self, nodes_list, cluster_name):
         """
@@ -250,7 +251,7 @@ class Qbert():
         method = 'POST'
         body = node_uuids
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def detach_node(self, node_name, cluster_name):
         """
@@ -266,7 +267,7 @@ class Qbert():
         method = 'POST'
         body = node_uuid
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def attach_nodes_v2(self, node_names, cluster_name):
         """
@@ -283,7 +284,7 @@ class Qbert():
         method = 'POST'
         body = node_uuids
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def detach_node_v2(self, node_name, cluster_name):
         """
@@ -298,7 +299,7 @@ class Qbert():
         method = 'PUT'
         body = {'cluster_uuid': None}
         resp = self._make_req(endpoint, method, body)
-        return resp.json()
+        return resp
 
     def get_cluster(self, name):
         """
@@ -312,7 +313,7 @@ class Qbert():
         cluster_uuid = clusters[name]['uuid']
         endpoint = '/clusters/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint)
-        return resp.json()
+        return resp
 
     def get_master_ip(self, cluster_name):
         """
@@ -353,6 +354,7 @@ class Qbert():
         node_uuid = self.list_nodes()[node_name]['uuid']
         endpoint = '/LOGs/{0}'.format(node_uuid)
         resp = self._make_req(endpoint)
+        # TODO: resp is not a Response object anymore,
         return resp.text
 
     def get_cli_token(self, cluster_uuid):
@@ -365,7 +367,7 @@ class Qbert():
         endpoint = '/webcli/{0}'.format(cluster_uuid)
         method = 'POST'
         resp = self._make_req(endpoint, method)
-        return resp.json()['token']
+        return resp['token']
 
     def trigger_omniupgrade(self):
         """
