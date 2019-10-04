@@ -75,7 +75,8 @@ class Qbert():
         """
         endpoint = '/cloudProviders/{0}'.format(uuid)
         method = 'DELETE'
-        self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method)
+        return resp.json()
 
     def create_cloud_provider(self, request_body):
         """
@@ -86,8 +87,7 @@ class Qbert():
         endpoint = '/cloudProviders'
         method = 'POST'
         resp = self._make_req(endpoint, method, request_body)
-        uuid = resp.json()['uuid']
-        return uuid
+        return resp.json()
 
     def update_cloud_provider(self, uuid, request_body):
         """
@@ -99,7 +99,8 @@ class Qbert():
         """
         endpoint = '/cloudProviders/' + uuid
         method = 'PUT'
-        self._make_req(endpoint, method, request_body)
+        resp = self._make_req(endpoint, method, request_body)
+        return resp.json()
 
     def list_cloud_providers(self):
         """
@@ -129,7 +130,7 @@ class Qbert():
         LOG.debug('Listing node pools')
         endpoint = '/nodePools'
         resp = self._make_req(endpoint)
-        return dict_utils.keyed_list_to_dict(resp.json(), 'name')
+        return resp.json()
 
     def list_nodes(self):
         """
@@ -139,7 +140,7 @@ class Qbert():
         LOG.debug('Listing nodes')
         endpoint = '/nodes'
         resp = self._make_req(endpoint)
-        return dict_utils.keyed_list_to_dict(resp.json(), 'name')
+        return resp.json()
 
     def list_nodes_by_uuid(self):
         """
@@ -159,7 +160,7 @@ class Qbert():
         LOG.debug('Listing clusters')
         endpoint = '/clusters'
         resp = self._make_req(endpoint)
-        return dict_utils.keyed_list_to_dict(resp.json(), 'name')
+        return resp.json()
 
     def list_clusters_by_uuid(self):
         """
@@ -181,7 +182,8 @@ class Qbert():
         LOG.debug('Updating cluster: %s', uuid)
         endpoint = '/clusters/' + uuid
         method = 'PUT'
-        self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body)
+        return resp.json()
 
     def create_cluster(self, body):
         """
@@ -193,8 +195,7 @@ class Qbert():
         endpoint = '/clusters'
         method = 'POST'
         resp = self._make_req(endpoint, method, body)
-        uuid = resp.json()['uuid']
-        return uuid
+        return resp.json()
 
     def get_cluster_by_uuid(self, uuid):
         """
@@ -216,7 +217,8 @@ class Qbert():
         LOG.debug('Deleting cluster %s', uuid)
         endpoint = '/clusters/{0}'.format(uuid)
         method = 'DELETE'
-        self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method)
+        return resp.json()
 
     def delete_cluster(self, name):
         """
@@ -228,7 +230,8 @@ class Qbert():
         cluster_uuid = self.list_clusters()[name]['uuid']
         endpoint = '/clusters/{0}'.format(cluster_uuid)
         method = 'DELETE'
-        self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method)
+        return resp.json()
 
     def attach_nodes(self, nodes_list, cluster_name):
         """
@@ -246,7 +249,8 @@ class Qbert():
         endpoint = '/clusters/{0}/attach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuids
-        self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body)
+        return resp.json()
 
     def detach_node(self, node_name, cluster_name):
         """
@@ -261,7 +265,8 @@ class Qbert():
         endpoint = '/clusters/{0}/detach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuid
-        self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body)
+        return resp.json()
 
     def attach_nodes_v2(self, node_names, cluster_name):
         """
@@ -277,7 +282,8 @@ class Qbert():
         endpoint = '/clusters/{0}/attach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuids
-        self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body)
+        return resp.json()
 
     def detach_node_v2(self, node_name, cluster_name):
         """
@@ -291,7 +297,8 @@ class Qbert():
         endpoint = '/nodes/{0}'.format(node_uuid)
         method = 'PUT'
         body = {'cluster_uuid': None}
-        self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body)
+        return resp.json()
 
     def get_cluster(self, name):
         """
