@@ -16,11 +16,10 @@
 This module implements a few helpful methods for interfacing with the requests library.
 """
 
-import json
 import logging
 import os
 
-from requests import HTTPError, Session
+from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -61,29 +60,4 @@ def make_req(session, endpoint, method, body, verify=True):
     resp = session.request(method, endpoint, json=body, verify=verify,
                            timeout=REQUEST_TIMEOUT)
     LOG.debug('%s %s - %s', method, endpoint, resp.status_code)
-    try:
-        resp.raise_for_status()
-        return resp
-    except HTTPError as error:
-        LOG.debug('HTTP Error. Full response text: %s', error.response.text)
-        raise error
-    finally:
-        _log_req_and_resp(resp)
-
-
-def _log_req_and_resp(resp):
-    try:
-        req_body = json.dumps(json.loads(resp.request.body), indent=4)
-    except (ValueError, TypeError):
-        req_body = resp.request.body
-    try:
-        resp_body = json.dumps(resp.json(), indent=4)
-    except (ValueError, TypeError):
-        resp_body = resp.text
-
-    msg = '\n'.join(['HTTP Session log',
-                     '------- Request: -------',
-                     req_body,
-                     '------- Response: ------',
-                     resp_body])
-    LOG.debug(msg)
+    return resp
