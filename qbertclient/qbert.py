@@ -34,11 +34,11 @@ class Qbert():
         if api_url[-1] == '/':
             raise ValueError('API url must not have trailing slash')
         self.api_url = api_url
+        self.token = token
         session = request_utils.session_with_retries(self.api_url)
-        session.headers = {'X-Auth-Token': token,
+        session.headers = {'X-Auth-Token': self.token,
                            'Content-Type': 'application/json'}
         self.session = session
-        self.subnet_shareable = False
 
     def _make_req(self, endpoint, method='GET', body={}):
         return request_utils.make_req(self.session, self.api_url + endpoint,
@@ -304,7 +304,8 @@ class Qbert():
         """
         endpoint = '/kubeconfig/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint)
-        return resp.text
+        kubeconfig = resp.text.replace('__INSERT_BEARER_TOKEN_HERE_', self.token)
+        return kubeconfig
 
     def get_kubelog(self, node_name):
         """
