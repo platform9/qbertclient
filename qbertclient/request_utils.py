@@ -61,7 +61,10 @@ def make_req(session, endpoint, method, body, verify=True):
     resp = session.request(method, endpoint, json=body, verify=verify,
                            timeout=REQUEST_TIMEOUT)
     LOG.debug('%s %s - %s', method, endpoint, resp.status_code)
-    obj = resp.json()
-    if 'error' in obj:
-        raise QbertExceptions.QbertError(obj['error']['message'])
-    return obj
+    if 'application/json' in resp.headers.get('content-type'):
+        obj = resp.json()
+        if 'error' in obj:
+            raise QbertExceptions.QbertError(obj['error']['message'])
+        return obj
+    else:
+        return resp
