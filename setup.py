@@ -20,7 +20,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="qbertclient",
-    version="0.0.10",
+    version="0.0.11",
     author="Vann Teves",
     author_email="vann@platform9.com",
     license="Apache License 2.0",
