@@ -304,7 +304,7 @@ class Qbert():
         """
         endpoint = '/kubeconfig/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint)
-        kubeconfig = resp.text.replace('__INSERT_BEARER_TOKEN_HERE_', self.token)
+        kubeconfig = resp.text.replace('__INSERT_BEARER_TOKEN_HERE__', self.token)
         return kubeconfig
 
     def get_kubelog(self, node_name):
