@@ -15,7 +15,7 @@
 """
 This module contains the Qbert class
 """
-
+import base64
 import logging
 
 from qbertclient import dict_utils, request_utils
@@ -296,15 +296,24 @@ class Qbert():
         LOG.debug('Getting masterIp for cluster %s', cluster_uuid)
         return self.get_cluster(cluster_uuid)['masterIp']
 
-    def get_kubeconfig(self, cluster_uuid):
+    def get_kubeconfig(self, cluster_uuid, username='', password=''):
         """
-        Get kubeconfig of a cluster by uuid
+        Get kubeconfig of a cluster by uuid. If both username and password
+        are supplied, then configure kubeconfig to use password-based
+        authentication, else use token.
         :param cluster_uuid:
+        :param username: optional username
+        :param password: optional password
         :return:
         """
         endpoint = '/kubeconfig/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint)
-        kubeconfig = resp.text.replace('__INSERT_BEARER_TOKEN_HERE__', self.token)
+        if username and password:
+            s = '{"username":"%s","password":"%s"}' % (username, password)
+            token = base64.b64encode(s.encode()).decode()
+        else:
+            token = self.token
+        kubeconfig = resp.text.replace('__INSERT_BEARER_TOKEN_HERE__', token)
         return kubeconfig
 
     def get_kubelog(self, node_name):
