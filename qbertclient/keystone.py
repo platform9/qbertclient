@@ -29,13 +29,13 @@ class Keystone():
     The Keystone class which implements a simple Keystone client
     """
 
-    def __init__(self, du_fqdn, username, password, project_name, mfa_token=None, verify=True):
+    def __init__(self, du_fqdn, username, password, project_name, mfa_token=None, **http_args):
         self.du_fqdn = du_fqdn
         self.username = username
         self.password = password
         self.project_name = project_name
         self.mfa_token = mfa_token
-        self.verify = verify
+        self.http_args = http_args
         self.token = None
 
     def get_token(self):
@@ -88,7 +88,7 @@ class Keystone():
         resp = requests.post(url,
                              data=json.dumps(body),
                              headers={'content-type': 'application/json'},
-                             verify=self.verify)
+                             **self.http_args)
         resp.raise_for_status()
         LOG.debug("Printing login response: {}".format(resp.json()))
         self.token = resp.headers['X-Subject-Token']
@@ -101,9 +101,10 @@ class Keystone():
         :return:
         """
         url = "https://{}/keystone/v3/projects".format(self.du_fqdn)
-        resp = requests.get(url, verify=self.verify,
+        resp = requests.get(url,
                             headers={'X-Auth-Token': self.token,
-                                     'Content-Type': 'application/json'})
+                                     'Content-Type': 'application/json'},
+                            **self.http_args)
         projects = resp.json()['projects']
         for project in projects:
             if project['name'] == project_name:

@@ -23,9 +23,9 @@ username = "username@platform9.net"
 password = "hunter2"
 project_name = "service"
 
-keystone = keystone.Keystone(du_fqdn, username, password, project_name)
-token = keystone.get_token()
-project_id = keystone.get_project_id(project_name)
+ks = keystone.Keystone(du_fqdn, username, password, project_name)
+token = ks.get_token()
+project_id = ks.get_project_id(project_name)
 
 qb = qbert.Qbert(token, "https://{}/qbert/v3/{}".format(du_fqdn, project_id))
 print(qb.list_clusters())

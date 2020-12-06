@@ -28,21 +28,22 @@ class Qbert():
     The Qbert client to Platform9's Managed Kubernetes product.
     """
 
-    def __init__(self, token, api_url):
+    def __init__(self, token, api_url, **http_args):
         if not (token and api_url):
             raise ValueError('need a keystone token and API url')
         if api_url[-1] == '/':
             raise ValueError('API url must not have trailing slash')
         self.api_url = api_url
         self.token = token
+        self.http_args = http_args
         session = request_utils.session_with_retries(self.api_url)
         session.headers = {'X-Auth-Token': self.token,
                            'Content-Type': 'application/json'}
         self.session = session
 
-    def _make_req(self, endpoint, method='GET', body={}):
+    def _make_req(self, endpoint, method='GET', body={}, **kwargs):
         return request_utils.make_req(self.session, self.api_url + endpoint,
-                                      method, body)
+                                      method, body, **kwargs)
 
     def get_cloud_provider(self, uuid):
         """
@@ -52,7 +53,7 @@ class Qbert():
         """
         LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}'.format(uuid)
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def get_cloud_provider_region_info(self, uuid, region):
@@ -64,7 +65,7 @@ class Qbert():
         """
         LOG.debug('Getting cloud provider region info for: %s', uuid)
         endpoint = '/cloudProviders/{0}/region/{1}'.format(uuid, region)
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def delete_cloud_provider(self, uuid):
@@ -75,7 +76,7 @@ class Qbert():
         """
         endpoint = '/cloudProviders/{0}'.format(uuid)
         method = 'DELETE'
-        resp = self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method, **self.http_args)
         return resp
 
     def create_cloud_provider(self, request_body):
@@ -86,7 +87,7 @@ class Qbert():
         """
         endpoint = '/cloudProviders'
         method = 'POST'
-        resp = self._make_req(endpoint, method, request_body)
+        resp = self._make_req(endpoint, method, request_body, **self.http_args)
         return resp
 
     def update_cloud_provider(self, uuid, request_body):
@@ -99,7 +100,7 @@ class Qbert():
         """
         endpoint = '/cloudProviders/' + uuid
         method = 'PUT'
-        resp = self._make_req(endpoint, method, request_body)
+        resp = self._make_req(endpoint, method, request_body, **self.http_args)
         return resp
 
     def list_cloud_providers(self):
@@ -109,7 +110,7 @@ class Qbert():
         """
         LOG.debug('Listing Cloud Providers')
         endpoint = '/cloudProviders'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def list_cloud_provider_types(self):
@@ -119,7 +120,7 @@ class Qbert():
         """
         LOG.debug('Listing Cloud Provider Types')
         endpoint = '/cloudProvider/types'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def list_nodepools(self):
@@ -129,7 +130,7 @@ class Qbert():
         """
         LOG.debug('Listing node pools')
         endpoint = '/nodePools'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def list_nodes(self):
@@ -139,7 +140,7 @@ class Qbert():
         """
         LOG.debug('Listing nodes')
         endpoint = '/nodes'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def list_nodes_by_uuid(self):
@@ -149,7 +150,7 @@ class Qbert():
         """
         LOG.debug('Listing nodes')
         endpoint = '/nodes'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return dict_utils.keyed_list_to_dict(resp, 'uuid')
 
     def list_clusters(self):
@@ -159,7 +160,7 @@ class Qbert():
         """
         LOG.debug('Listing clusters')
         endpoint = '/clusters'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def list_clusters_by_uuid(self):
@@ -169,7 +170,7 @@ class Qbert():
         """
         LOG.debug('Listing clusters')
         endpoint = '/clusters'
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return dict_utils.keyed_list_to_dict(resp, 'uuid')
 
     def update_cluster(self, uuid, body):
@@ -182,7 +183,7 @@ class Qbert():
         LOG.debug('Updating cluster: %s', uuid)
         endpoint = '/clusters/' + uuid
         method = 'PUT'
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def create_cluster(self, body):
@@ -194,7 +195,7 @@ class Qbert():
         LOG.debug('Creating cluster %s', body['name'])
         endpoint = '/clusters'
         method = 'POST'
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def get_cluster(self, uuid):
@@ -205,7 +206,7 @@ class Qbert():
         """
         LOG.debug('Get cluster')
         endpoint = '/clusters/%s' % uuid
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         return resp
 
     def delete_cluster(self, uuid):
@@ -217,7 +218,7 @@ class Qbert():
         LOG.debug('Deleting cluster %s', uuid)
         endpoint = '/clusters/{0}'.format(uuid)
         method = 'DELETE'
-        resp = self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method, **self.http_args)
         return resp
 
     def attach_nodes(self, nodes_list, cluster_name):
@@ -236,7 +237,7 @@ class Qbert():
         endpoint = '/clusters/{0}/attach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuids
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def detach_node(self, node_name, cluster_name):
@@ -252,7 +253,7 @@ class Qbert():
         endpoint = '/clusters/{0}/detach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuid
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def attach_nodes_v2(self, node_names, cluster_name):
@@ -269,7 +270,7 @@ class Qbert():
         endpoint = '/clusters/{0}/attach'.format(cluster_uuid)
         method = 'POST'
         body = node_uuids
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def detach_node_v2(self, node_name, cluster_name):
@@ -284,7 +285,7 @@ class Qbert():
         endpoint = '/nodes/{0}'.format(node_uuid)
         method = 'PUT'
         body = {'cluster_uuid': None}
-        resp = self._make_req(endpoint, method, body)
+        resp = self._make_req(endpoint, method, body, **self.http_args)
         return resp
 
     def get_master_ip(self, cluster_uuid):
@@ -307,7 +308,7 @@ class Qbert():
         :return:
         """
         endpoint = '/kubeconfig/{0}'.format(cluster_uuid)
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         if username and password:
             s = '{"username":"%s","password":"%s"}' % (username, password)
             token = base64.b64encode(s.encode()).decode()
@@ -325,7 +326,7 @@ class Qbert():
         LOG.debug('Requesting kube.LOG from node %s', node_name)
         node_uuid = self.list_nodes()[node_name]['uuid']
         endpoint = '/LOGs/{0}'.format(node_uuid)
-        resp = self._make_req(endpoint)
+        resp = self._make_req(endpoint, **self.http_args)
         # TODO: resp is not a Response object anymore,
         return resp.text
 
@@ -338,7 +339,7 @@ class Qbert():
         LOG.debug('Getting cli token for cluster %s', cluster_uuid)
         endpoint = '/webcli/{0}'.format(cluster_uuid)
         method = 'POST'
-        resp = self._make_req(endpoint, method)
+        resp = self._make_req(endpoint, method, **self.http_args)
         return resp['token']
 
     def trigger_omniupgrade(self):
@@ -349,7 +350,7 @@ class Qbert():
         LOG.debug('Triggering omniupgrade')
         endpoint = '/omniupgrade'
         method = 'POST'
-        return self._make_req(endpoint, method)
+        return self._make_req(endpoint, method, **self.http_args)
 
     def upgrade_cluster(self, uuid):
         """
@@ -361,4 +362,4 @@ class Qbert():
         endpoint = '/clusters/{0}/upgrade'.format(uuid)
         method = 'POST'
         body = {'batchUpgradePercent': 100}
-        return self._make_req(endpoint, method, body)
+        return self._make_req(endpoint, method, body, **self.http_args)

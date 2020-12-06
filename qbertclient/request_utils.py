@@ -48,18 +48,18 @@ def session_with_retries(host, max_retries=10):
     return session
 
 
-def make_req(session, endpoint, method, body, verify=True):
+def make_req(session, endpoint, method, body, **kwargs):
     """
     Main request wrapper
     :param session:
     :param endpoint:
     :param method:
     :param body:
-    :param verify:
+    :param kwargs:
     :return:
     """
-    resp = session.request(method, endpoint, json=body, verify=verify,
-                           timeout=REQUEST_TIMEOUT)
+    resp = session.request(method, endpoint, json=body,
+                           timeout=REQUEST_TIMEOUT, **kwargs)
     LOG.debug('%s %s - %s', method, endpoint, resp.status_code)
     if 'application/json' in resp.headers.get('content-type'):
         obj = resp.json()
