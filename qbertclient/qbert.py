@@ -16,6 +16,7 @@
 This module contains the Qbert class
 """
 import base64
+import json
 import logging
 
 from qbertclient import dict_utils, request_utils
@@ -310,7 +311,8 @@ class Qbert():
         endpoint = '/kubeconfig/{0}'.format(cluster_uuid)
         resp = self._make_req(endpoint, **self.http_args)
         if username and password:
-            s = '{"username":"%s","password":"%s"}' % (username, password)
+            # Use JSON lib encoding to handle string escaping.
+            s = json.dumps({'username': username, 'password': password})
             token = base64.b64encode(s.encode()).decode()
         else:
             token = self.token
